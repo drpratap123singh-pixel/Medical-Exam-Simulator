@@ -2,6 +2,8 @@ import streamlit as st
 import google.generativeai as genai
 import json
 import time
+import os
+import datetime
 import PyPDF2
 
 # --- CONFIGURATION ---
@@ -11,6 +13,7 @@ except:
     api_key = "PASTE_YOUR_KEY_HERE"
 
 genai.configure(api_key=api_key)
+HISTORY_FILE = "exam_history.json"
 
 st.set_page_config(page_title="MEDICAL EXAM SIMULATOR", layout="wide")
 
@@ -50,6 +53,12 @@ def apply_exam_ui():
             border: 1px solid #000000 !important;
             font-weight: bold !important;
         }}
+        
+        /* Sidebar */
+        [data-testid="stSidebar"] {{
+            background-color: #f8f9fa !important;
+            border-right: 1px solid #cccccc !important;
+        }}
         </style>
     """, unsafe_allow_html=True)
 
@@ -63,6 +72,29 @@ def get_working_model_name():
         return "models/gemini-pro"
     except: return "models/gemini-1.5-flash"
 
+# --- HISTORY FUNCTIONS (NEW) ---
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r") as f: return json.load(f)
+        except: return []
+    return []
+
+def save_history(topic, score, total, questions, answers):
+    history = load_history()
+    entry = {
+        "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "topic": topic,
+        "score": f"{score}/{total}",
+        "data": questions,
+        "user_answers": answers
+    }
+    history.insert(0, entry) # Add to top
+    try:
+        with open(HISTORY_FILE, "w") as f: json.dump(history, f)
+    except: pass
+    return history
+
 # --- CORE FUNCTIONS ---
 def extract_pdf(file):
     reader = PyPDF2.PdfReader(file)
@@ -71,10 +103,15 @@ def extract_pdf(file):
 def generate_exam_data(topic, num, difficulty, context=None):
     model_name = get_working_model_name()
     model = genai.GenerativeModel(model_name)
-    # Updated prompt to include extra_edge
-    prompt = f"Create a {difficulty} medical exam with {num} questions on {topic}. JSON ONLY."
+    
+    # STRICT PROMPT FOR EXTRA EDGE
+    prompt = f"""
+    Act as a Medical Exam Setter. Create a {difficulty} exam with {num} questions on {topic}.
+    CRITICAL INSTRUCTION: You MUST provide an 'extra_edge' field for EVERY question containing a high-yield fact or pearl.
+    Output VALID JSON ONLY.
+    """
     if context: prompt += f"\nContext: {context[:12000]}"
-    prompt += "\nFormat: [{\"question\":\"...\",\"options\":{\"A\":\"..\",\"B\":\"..\",\"C\":\"..\",\"D\":\"..\"},\"correct\":\"A\",\"explanation\":\"...\",\"extra_edge\":\"...\"}]"
+    prompt += "\nFormat: [{\"question\":\"...\",\"options\":{\"A\":\"..\",\"B\":\"..\",\"C\":\"..\",\"D\":\"..\"},\"correct\":\"A\",\"explanation\":\"...\",\"extra_edge\":\"HIGH YIELD FACT HERE\"}]"
     
     try:
         response = model.generate_content(prompt)
@@ -134,6 +171,7 @@ if 'total_seconds' not in st.session_state: st.session_state.total_seconds = 0
 if 'marked' not in st.session_state: st.session_state.marked = set()
 if 'submitted' not in st.session_state: st.session_state.submitted = False
 if 'topic' not in st.session_state: st.session_state.topic = "General"
+if 'history' not in st.session_state: st.session_state.history = load_history()
 
 apply_exam_ui()
 
@@ -147,26 +185,50 @@ with c_plus:
 # --- 1. SETUP SCREEN ---
 if not st.session_state.exam_active and not st.session_state.submitted:
     st.title("Medical Exam Simulator Pro")
-    topic = st.text_input("Enter Exam Topic (e.g. Neurology)")
-    source = st.radio("Question Source:", ["AI Knowledge", "Upload PDF"], horizontal=True)
-    pdf_text = None
-    if source == "Upload PDF":
-        f = st.file_uploader("Upload Medical PDF", type='pdf')
-        if f: pdf_text = extract_pdf(f)
-    q_count = st.selectbox("Number of Questions:", [20, 40, 60])
-    timer_map = {20: 25*60, 40: 45*60, 60: 70*60}
     
-    st.divider()
-    if st.button("🚀 Start Exam", type="primary"):
-        with st.spinner("Generating Exam..."):
-            st.session_state.topic = topic
-            data = generate_exam_data(topic, q_count, "Hard", pdf_text)
-            if data:
-                st.session_state.exam_data = data
-                st.session_state.exam_active = True
-                st.session_state.total_seconds = timer_map[q_count]
-                st.session_state.start_time = time.time()
-                st.rerun()
+    # SETUP LAYOUT
+    col_setup, col_hist = st.columns([2, 1])
+    
+    with col_setup:
+        topic = st.text_input("Enter Exam Topic (e.g. Neurology)")
+        source = st.radio("Question Source:", ["AI Knowledge", "Upload PDF"], horizontal=True)
+        pdf_text = None
+        if source == "Upload PDF":
+            f = st.file_uploader("Upload Medical PDF", type='pdf')
+            if f: pdf_text = extract_pdf(f)
+        q_count = st.selectbox("Number of Questions:", [20, 40, 60])
+        timer_map = {20: 25*60, 40: 45*60, 60: 70*60}
+        
+        st.divider()
+        if st.button("🚀 Start Exam", type="primary"):
+            with st.spinner("Generating Exam..."):
+                st.session_state.topic = topic
+                data = generate_exam_data(topic, q_count, "Hard", pdf_text)
+                if data:
+                    st.session_state.exam_data = data
+                    st.session_state.exam_active = True
+                    st.session_state.total_seconds = timer_map[q_count]
+                    st.session_state.start_time = time.time()
+                    st.rerun()
+
+    # HISTORY IN SIDEBAR (OR RIGHT COLUMN)
+    with st.sidebar:
+        st.subheader("📜 Previous Exams")
+        if st.session_state.history:
+            for i, item in enumerate(st.session_state.history):
+                # Button label: Topic + Score
+                lbl = f"{item['topic']} ({item['score']})"
+                if st.button(lbl, key=f"hist_{i}"):
+                    # Load this exam back into session
+                    st.session_state.exam_data = item['data']
+                    st.session_state.user_answers = item.get('user_answers', {})
+                    st.session_state.topic = item['topic']
+                    st.session_state.exam_active = False
+                    st.session_state.submitted = True
+                    st.session_state.current_q = 0
+                    st.rerun()
+        else:
+            st.info("No exams taken yet.")
 
 # --- 2. EXAM INTERFACE ---
 elif st.session_state.exam_active:
@@ -229,6 +291,22 @@ elif st.session_state.exam_active:
 # --- 3. REVIEW SCREEN ---
 elif st.session_state.submitted:
     st.title("📊 Exam Results")
+    
+    # Save History ONCE if not already saved in this session
+    if 'history_saved' not in st.session_state:
+        total = len(st.session_state.exam_data)
+        correct = sum(1 for i, q in enumerate(st.session_state.exam_data) if st.session_state.user_answers.get(i) == q['correct'])
+        raw_score = (correct * 4) - ((len(st.session_state.user_answers) - correct) * 1)
+        st.session_state.history = save_history(
+            st.session_state.topic, 
+            raw_score, 
+            total * 4, 
+            st.session_state.exam_data, 
+            st.session_state.user_answers
+        )
+        st.session_state.history_saved = True # Prevent double saving on refresh
+
+    # Calculate Stats
     total = len(st.session_state.exam_data)
     correct = sum(1 for i, q in enumerate(st.session_state.exam_data) if st.session_state.user_answers.get(i) == q['correct'])
     incorrect = len(st.session_state.user_answers) - correct
@@ -239,7 +317,7 @@ elif st.session_state.submitted:
     c1.metric("Final Score", raw_score); c2.metric("Correct", correct)
     c3.metric("Wrong", incorrect); c4.metric("Skipped", skipped)
     
-    # --- DOWNLOAD BUTTON ---
+    # Download Report
     report_text = create_report(st.session_state.topic, raw_score, total * 4, st.session_state.exam_data, st.session_state.user_answers)
     st.download_button("📥 Download Full Report", report_text, file_name=f"Exam_Report_{st.session_state.topic}.txt")
     
@@ -258,10 +336,25 @@ elif st.session_state.submitted:
             if cols[i % 3].button(f"{btn_lbl}{i+1}", key=f"res_{i}"):
                 st.session_state.current_q = i
                 st.rerun()
+        
+        st.divider()
         if st.button("Start New Exam"):
             for k in list(st.session_state.keys()):
-                if k != 'font_size': del st.session_state[k]
+                if k != 'font_size' and k != 'history': del st.session_state[k]
             st.rerun()
+        
+        # History in Review Sidebar too
+        st.divider()
+        st.markdown("📜 **History**")
+        for i, item in enumerate(st.session_state.history):
+             if st.button(f"{item['topic']} ({item['score']})", key=f"hist_r_{i}"):
+                st.session_state.exam_data = item['data']
+                st.session_state.user_answers = item.get('user_answers', {})
+                st.session_state.topic = item['topic']
+                st.session_state.exam_active = False
+                st.session_state.submitted = True
+                st.session_state.current_q = 0
+                st.rerun()
 
     with col_res:
         idx = st.session_state.current_q
@@ -277,5 +370,7 @@ elif st.session_state.submitted:
             else: st.write(f"{opt}: {txt}")
         
         st.info(f"**Explanation:** {q['explanation']}")
-        # --- SHOW EXTRA EDGE ---
-        st.warning(f"**Extra Edge:** {q.get('extra_edge', 'N/A')}")
+        # EXTRA EDGE DISPLAY
+        edge = q.get('extra_edge')
+        if edge and edge != "N/A":
+            st.warning(f"**⚡ Extra Edge:** {edge}")
