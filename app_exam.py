@@ -2,8 +2,8 @@ import streamlit as st
 import google.generativeai as genai
 import json
 import time
-import os
 import datetime
+import os
 import PyPDF2
 
 # --- CONFIGURATION ---
@@ -15,7 +15,7 @@ except:
 genai.configure(api_key=api_key)
 HISTORY_FILE = "exam_history.json"
 
-st.set_page_config(page_title="MEDICAL EXAM SIMULATOR", layout="wide")
+st.set_page_config(page_title="MEDICAL PG EXAM SIMULATOR", layout="wide")
 
 # --- UI ENGINE: WHITE THEME & BLACK TEXT ---
 if 'font_size' not in st.session_state: st.session_state.font_size = 20
@@ -24,41 +24,41 @@ def apply_exam_ui():
     f_size = st.session_state.font_size
     st.markdown(f"""
         <style>
+        /* 1. FORCE MAIN BACKGROUND WHITE */
         .stApp {{ background-color: #ffffff !important; color: #000000 !important; }}
         
-        /* Force Text Black */
-        p, div, label, span, h1, h2, h3, h4, .stMarkdown, .stRadio label {{
+        /* 2. FORCE TEXT BLACK & VISIBLE */
+        p, div, label, span, h1, h2, h3, h4, .stMarkdown, .stRadio label, li {{
             font-size: {f_size}px !important;
             color: #000000 !important;
             opacity: 1.0 !important;
         }}
 
-        /* White Input Boxes */
-        .stTextInput input {{
+        /* 3. WHITE INPUT BOXES & DROPDOWNS */
+        .stTextInput input, .stSelectbox div[data-baseweb="select"] > div {{
             background-color: #ffffff !important;
             color: #000000 !important;
             border: 1px solid #000000 !important;
         }}
         
-        div[data-baseweb="select"] > div {{
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            border: 1px solid #000000 !important;
+        /* 4. PALETTE GRID STYLING */
+        .stButton button {{
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid #ccc;
+            background-color: #f0f2f6;
+            color: black;
         }}
         
-        /* Buttons */
-        .stButton>button {{
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            border: 1px solid #000000 !important;
-            font-weight: bold !important;
+        /* 5. CURRENT QUESTION HIGHLIGHT (Blue Border) */
+        div[data-testid="column"] {{
+            border-radius: 10px;
+            padding: 10px;
         }}
         
-        /* Sidebar */
-        [data-testid="stSidebar"] {{
-            background-color: #f8f9fa !important;
-            border-right: 1px solid #cccccc !important;
-        }}
+        /* 6. RADIO BUTTON SPACING */
+        .stRadio div {{ margin-bottom: 10px; }}
         </style>
     """, unsafe_allow_html=True)
 
@@ -72,7 +72,7 @@ def get_working_model_name():
         return "models/gemini-pro"
     except: return "models/gemini-1.5-flash"
 
-# --- HISTORY FUNCTIONS (NEW) ---
+# --- HISTORY & PDF FUNCTIONS ---
 def load_history():
     if os.path.exists(HISTORY_FILE):
         try:
@@ -89,29 +89,37 @@ def save_history(topic, score, total, questions, answers):
         "data": questions,
         "user_answers": answers
     }
-    history.insert(0, entry) # Add to top
+    history.insert(0, entry)
     try:
         with open(HISTORY_FILE, "w") as f: json.dump(history, f)
     except: pass
     return history
 
-# --- CORE FUNCTIONS ---
 def extract_pdf(file):
     reader = PyPDF2.PdfReader(file)
     return "".join([p.extract_text() for p in reader.pages])
 
+# --- AI GENERATION (COMPLEX QUESTIONS) ---
 def generate_exam_data(topic, num, difficulty, context=None):
     model_name = get_working_model_name()
     model = genai.GenerativeModel(model_name)
     
-    # STRICT PROMPT FOR EXTRA EDGE
+    # COMPLEX PROMPT FOR MARROW-STYLE QUESTIONS
     prompt = f"""
-    Act as a Medical Exam Setter. Create a {difficulty} exam with {num} questions on {topic}.
-    CRITICAL INSTRUCTION: You MUST provide an 'extra_edge' field for EVERY question containing a high-yield fact or pearl.
+    Act as a Medical Exam Setter (NEET PG / USMLE Step 2 Level). 
+    Create a {difficulty} exam with {num} questions on {topic}.
+    
+    CRITICAL: You must generate a mix of these 4 types:
+    1. Clinical Vignettes (Long patient history, labs, diagnosis).
+    2. Match the Following (Present the columns clearly in the question text).
+    3. Sequencing/Ordering (e.g., "Correct order of steps").
+    4. Statement Analysis ("Which statement is most accurate?").
+    
+    Provide an 'extra_edge' (High Yield Pearl) for every question.
     Output VALID JSON ONLY.
     """
-    if context: prompt += f"\nContext: {context[:12000]}"
-    prompt += "\nFormat: [{\"question\":\"...\",\"options\":{\"A\":\"..\",\"B\":\"..\",\"C\":\"..\",\"D\":\"..\"},\"correct\":\"A\",\"explanation\":\"...\",\"extra_edge\":\"HIGH YIELD FACT HERE\"}]"
+    if context: prompt += f"\nContext: {context[:15000]}"
+    prompt += "\nFormat: [{\"question\":\"(Type: Vignette/Match/etc) Question Text...\",\"options\":{\"A\":\"..\",\"B\":\"..\",\"C\":\"..\",\"D\":\"..\"},\"correct\":\"A\",\"explanation\":\"...\",\"extra_edge\":\"...\"}]"
     
     try:
         response = model.generate_content(prompt)
@@ -126,20 +134,17 @@ def create_report(topic, score, total, questions, answers):
     for i, q in enumerate(questions):
         ans = answers.get(i) or answers.get(str(i))
         status = "✅ CORRECT" if ans == q['correct'] else f"❌ WRONG (Your Answer: {ans})"
-        
         report += f"Q{i+1}: {q['question']}\nSTATUS: {status}\n"
         report += f"OPTIONS:\n" + "\n".join([f" {'->' if k==q['correct'] else '  '} {k}: {v}" for k,v in q['options'].items()])
-        report += f"\n\nEXPLANATION: {q.get('explanation', 'N/A')}\n"
-        report += f"EXTRA EDGE: {q.get('extra_edge', 'N/A')}\n"
-        report += "="*50 + "\n\n" 
+        report += f"\n\nEXPLANATION: {q.get('explanation', 'N/A')}\nEXTRA EDGE: {q.get('extra_edge', 'N/A')}\n" + "="*50 + "\n\n" 
     return report
 
-# --- TIMER FUNCTION ---
+# --- LIVE TIMER ---
 def display_live_timer(remaining_seconds):
     mins, secs = divmod(int(remaining_seconds), 60)
     time_str = f"{mins:02d}:{secs:02d}"
     st.markdown(f"""
-        <div style="text-align: center; font-size: 30px; font-weight: bold; color: #d90429; background-color: #fff; border: 2px solid #d90429; border-radius: 8px; padding: 8px; margin-bottom: 15px;">
+        <div style="text-align: center; font-size: 24px; font-weight: bold; color: #d90429; background-color: #fff; border: 2px solid #d90429; border-radius: 8px; padding: 5px; margin-bottom: 10px;">
             ⏱️ <span id="timer_box">{time_str}</span>
         </div>
         <script>
@@ -186,11 +191,10 @@ with c_plus:
 if not st.session_state.exam_active and not st.session_state.submitted:
     st.title("Medical Exam Simulator Pro")
     
-    # SETUP LAYOUT
     col_setup, col_hist = st.columns([2, 1])
     
     with col_setup:
-        topic = st.text_input("Enter Exam Topic (e.g. Neurology)")
+        topic = st.text_input("Enter Exam Topic (e.g. Ophthalmology Clinical Cases)")
         source = st.radio("Question Source:", ["AI Knowledge", "Upload PDF"], horizontal=True)
         pdf_text = None
         if source == "Upload PDF":
@@ -201,7 +205,7 @@ if not st.session_state.exam_active and not st.session_state.submitted:
         
         st.divider()
         if st.button("🚀 Start Exam", type="primary"):
-            with st.spinner("Generating Exam..."):
+            with st.spinner("Generating High-Yield Questions..."):
                 st.session_state.topic = topic
                 data = generate_exam_data(topic, q_count, "Hard", pdf_text)
                 if data:
@@ -211,15 +215,11 @@ if not st.session_state.exam_active and not st.session_state.submitted:
                     st.session_state.start_time = time.time()
                     st.rerun()
 
-    # HISTORY IN SIDEBAR (OR RIGHT COLUMN)
-    with st.sidebar:
-        st.subheader("📜 Previous Exams")
+    with col_hist:
+        st.subheader("📜 History")
         if st.session_state.history:
             for i, item in enumerate(st.session_state.history):
-                # Button label: Topic + Score
-                lbl = f"{item['topic']} ({item['score']})"
-                if st.button(lbl, key=f"hist_{i}"):
-                    # Load this exam back into session
+                if st.button(f"{item['topic']} ({item['score']})", key=f"hist_{i}"):
                     st.session_state.exam_data = item['data']
                     st.session_state.user_answers = item.get('user_answers', {})
                     st.session_state.topic = item['topic']
@@ -227,10 +227,8 @@ if not st.session_state.exam_active and not st.session_state.submitted:
                     st.session_state.submitted = True
                     st.session_state.current_q = 0
                     st.rerun()
-        else:
-            st.info("No exams taken yet.")
 
-# --- 2. EXAM INTERFACE ---
+# --- 2. EXAM INTERFACE (SPLIT SCREEN) ---
 elif st.session_state.exam_active:
     elapsed = time.time() - st.session_state.start_time
     remaining = st.session_state.total_seconds - elapsed
@@ -240,45 +238,25 @@ elif st.session_state.exam_active:
         st.session_state.submitted = True
         st.rerun()
 
-    idx = st.session_state.current_q
-    q = st.session_state.exam_data[idx]
-    
+    # LAYOUT: 75% Question | 25% Palette
     col_q, col_p = st.columns([3, 1])
     
-    with col_q:
-        st.markdown(f"### Question {idx + 1}")
-        st.markdown(f"**{q['question']}**")
-        st.write("Select Answer:")
-        
-        opts = list(q['options'].keys())
-        prev_ans = st.session_state.user_answers.get(idx)
-        ans = st.radio("Options:", opts, 
-                       format_func=lambda x: f"{x}: {q['options'][x]}",
-                       index=opts.index(prev_ans) if prev_ans else None,
-                       key=f"rad_{idx}", label_visibility="collapsed")
-        
-        st.write("---")
-        b1, b2, b3 = st.columns([1, 1, 1])
-        if b1.button("⬅ Previous") and idx > 0: st.session_state.current_q -= 1; st.rerun()
-        if b2.button("⭐ Mark Review"):
-            if idx in st.session_state.marked: st.session_state.marked.remove(idx)
-            else: st.session_state.marked.add(idx)
-            st.rerun()
-        if b3.button("Save & Next ➡"):
-            if ans: st.session_state.user_answers[idx] = ans
-            if idx < len(st.session_state.exam_data) - 1: st.session_state.current_q += 1
-            st.rerun()
-
+    # --- RIGHT COLUMN (PALETTE & TIMER) ---
     with col_p:
         display_live_timer(remaining)
-        st.markdown("#### Question Palette")
-        cols = st.columns(3)
+        st.markdown("**Question Palette**")
+        
+        # Grid Logic
+        cols = st.columns(4)
         for i in range(len(st.session_state.exam_data)):
-            label = f"{i+1}"
-            if i in st.session_state.marked: label = f"★{i+1}"
-            elif i in st.session_state.user_answers: label = f"✓{i+1}"
+            # Determine Status Symbol
+            if i == st.session_state.current_q: status = "🔵" # Current
+            elif i in st.session_state.marked and i in st.session_state.user_answers: status = "🟣✅" # Marked & Answered
+            elif i in st.session_state.marked: status = "🟣" # Marked Review
+            elif i in st.session_state.user_answers: status = "✅" # Answered
+            else: status = "⬜" # Not Visited/Answered
             
-            if cols[i % 3].button(label, key=f"nav_{i}"):
+            if cols[i % 4].button(f"{status} {i+1}", key=f"nav_{i}"):
                 st.session_state.current_q = i
                 st.rerun()
         
@@ -288,25 +266,61 @@ elif st.session_state.exam_active:
             st.session_state.submitted = True
             st.rerun()
 
+    # --- LEFT COLUMN (QUESTION) ---
+    with col_q:
+        idx = st.session_state.current_q
+        q = st.session_state.exam_data[idx]
+        
+        st.markdown(f"### Q{idx + 1}")
+        st.markdown(f"**{q['question']}**")
+        
+        opts = list(q['options'].keys())
+        prev_ans = st.session_state.user_answers.get(idx)
+        
+        # Radio Selection
+        ans = st.radio("Select Option:", opts, 
+                       format_func=lambda x: f"{x}: {q['options'][x]}",
+                       index=opts.index(prev_ans) if prev_ans else None,
+                       key=f"rad_{idx}")
+        
+        st.write("---")
+        
+        # ACTION BUTTONS
+        b1, b2, b3, b4 = st.columns([1.5, 1.5, 2, 2])
+        
+        if b1.button("⬅ Previous") and idx > 0:
+            st.session_state.current_q -= 1
+            st.rerun()
+            
+        if b2.button("Clear Response"):
+            if idx in st.session_state.user_answers:
+                del st.session_state.user_answers[idx]
+            st.rerun()
+            
+        if b3.button("🟣 Mark & Next"):
+            if idx not in st.session_state.marked: st.session_state.marked.add(idx)
+            if idx < len(st.session_state.exam_data) - 1: st.session_state.current_q += 1
+            st.rerun()
+            
+        if b4.button("💾 Save & Next"):
+            if ans: st.session_state.user_answers[idx] = ans
+            if idx in st.session_state.marked: st.session_state.marked.remove(idx) # Unmark if saved
+            if idx < len(st.session_state.exam_data) - 1: st.session_state.current_q += 1
+            st.rerun()
+
 # --- 3. REVIEW SCREEN ---
 elif st.session_state.submitted:
-    st.title("📊 Exam Results")
+    st.title("📊 Performance Analysis")
     
-    # Save History ONCE if not already saved in this session
+    # Save History ONCE
     if 'history_saved' not in st.session_state:
         total = len(st.session_state.exam_data)
         correct = sum(1 for i, q in enumerate(st.session_state.exam_data) if st.session_state.user_answers.get(i) == q['correct'])
         raw_score = (correct * 4) - ((len(st.session_state.user_answers) - correct) * 1)
-        st.session_state.history = save_history(
-            st.session_state.topic, 
-            raw_score, 
-            total * 4, 
-            st.session_state.exam_data, 
-            st.session_state.user_answers
-        )
-        st.session_state.history_saved = True # Prevent double saving on refresh
+        st.session_state.history = save_history(st.session_state.topic, raw_score, total * 4, st.session_state.exam_data, st.session_state.user_answers)
+        st.session_state.history_saved = True
 
-    # Calculate Stats
+    # Stats
     total = len(st.session_state.exam_data)
     correct = sum(1 for i, q in enumerate(st.session_state.exam_data) if st.session_state.user_answers.get(i) == q['correct'])
     incorrect = len(st.session_state.user_answers) - correct
@@ -314,26 +328,25 @@ elif st.session_state.submitted:
     raw_score = (correct * 4) - (incorrect * 1)
     
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Final Score", raw_score); c2.metric("Correct", correct)
+    c1.metric("Score (+4/-1)", raw_score); c2.metric("Correct", correct)
     c3.metric("Wrong", incorrect); c4.metric("Skipped", skipped)
     
-    # Download Report
     report_text = create_report(st.session_state.topic, raw_score, total * 4, st.session_state.exam_data, st.session_state.user_answers)
-    st.download_button("📥 Download Full Report", report_text, file_name=f"Exam_Report_{st.session_state.topic}.txt")
-    
+    st.download_button("📥 Download Report", report_text, file_name=f"Exam_{st.session_state.topic}.txt")
     st.divider()
 
     col_res, col_key = st.columns([3, 1])
     
+    # REVIEW PALETTE
     with col_key:
-        st.markdown("### Answer Key")
-        cols = st.columns(3)
+        st.markdown("**Answer Key**")
+        cols = st.columns(4)
         for i in range(total):
             user_a = st.session_state.user_answers.get(i)
             real_a = st.session_state.exam_data[i]['correct']
             btn_lbl = "✅" if user_a == real_a else "❌"
             if user_a is None: btn_lbl = "⚪"
-            if cols[i % 3].button(f"{btn_lbl}{i+1}", key=f"res_{i}"):
+            if cols[i % 4].button(f"{btn_lbl}{i+1}", key=f"res_{i}"):
                 st.session_state.current_q = i
                 st.rerun()
         
@@ -342,27 +355,15 @@ elif st.session_state.submitted:
             for k in list(st.session_state.keys()):
                 if k != 'font_size' and k != 'history': del st.session_state[k]
             st.rerun()
-        
-        # History in Review Sidebar too
-        st.divider()
-        st.markdown("📜 **History**")
-        for i, item in enumerate(st.session_state.history):
-             if st.button(f"{item['topic']} ({item['score']})", key=f"hist_r_{i}"):
-                st.session_state.exam_data = item['data']
-                st.session_state.user_answers = item.get('user_answers', {})
-                st.session_state.topic = item['topic']
-                st.session_state.exam_active = False
-                st.session_state.submitted = True
-                st.session_state.current_q = 0
-                st.rerun()
 
+    # QUESTION REVIEW
     with col_res:
         idx = st.session_state.current_q
         q = st.session_state.exam_data[idx]
         user_a = st.session_state.user_answers.get(idx)
         real_a = q['correct']
         
-        st.markdown(f"### Q{idx+1}: Review")
+        st.markdown(f"### Q{idx+1}")
         st.markdown(f"**{q['question']}**")
         for opt, txt in q['options'].items():
             if opt == real_a: st.success(f"✅ {opt}: {txt} (Correct Answer)")
@@ -370,7 +371,5 @@ elif st.session_state.submitted:
             else: st.write(f"{opt}: {txt}")
         
         st.info(f"**Explanation:** {q['explanation']}")
-        # EXTRA EDGE DISPLAY
-        edge = q.get('extra_edge')
-        if edge and edge != "N/A":
-            st.warning(f"**⚡ Extra Edge:** {edge}")
+        if q.get('extra_edge') and q.get('extra_edge') != "N/A":
+            st.warning(f"**⚡ Extra Edge:** {q.get('extra_edge')}")
