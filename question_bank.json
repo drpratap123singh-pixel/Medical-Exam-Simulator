@@ -1,0 +1,847 @@
+[
+  {
+    "category": "Grand Test",
+    "question": "According to the ASAS criteria for Axial Spondyloarthritis, if a patient lacks evidence of sacroiliitis on imaging, which combination is required for a clinical diagnosis?",
+    "options": [
+      "HLA-B27 positivity plus 1 SpA feature",
+      "HLA-B27 positivity plus at least 2 other SpA features",
+      "Elevated CRP and inflammatory back pain",
+      "Family history of AS and HLA-B27 positivity"
+    ],
+    "correct_answer": "HLA-B27 positivity plus at least 2 other SpA features",
+    "rationale": "The clinical arm requires HLA-B27 positivity and at least two other SpA features (e.g., uveitis, dactylitis, good response to NSAIDs).",
+    "hint": "Check the specific numerical requirement for the clinical arm."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which of the following biologic agents is specifically contraindicated in a patient with Ankylosing Spondylitis and active Crohn's Disease?",
+    "options": [
+      "Adalimumab",
+      "Etanercept",
+      "Secukinumab",
+      "Certolizumab pegol"
+    ],
+    "correct_answer": "Secukinumab",
+    "rationale": "IL-17 inhibitors can exacerbate or trigger new-onset inflammatory bowel disease.",
+    "hint": "This cytokine is crucial for maintaining gut mucosal barrier integrity."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In a patient with Clinically Amyopathic Dermatomyositis (CADM) who rapidly develops severe Interstitial Lung Disease, which autoantibody is most likely positive?",
+    "options": [
+      "Anti-Mi-2",
+      "Anti-Jo-1",
+      "Anti-MDA5",
+      "Anti-TIF1-gamma"
+    ],
+    "correct_answer": "Anti-MDA5",
+    "rationale": "Anti-MDA5 is the classic marker for CADM and carries a high risk of rapidly progressive, life-threatening ILD.",
+    "hint": "This antibody targets an innate immune sensor for viral RNA."
+  },
+  {
+    "category": "Grand Test",
+    "question": "A muscle biopsy showing 'perifascicular atrophy' and complement MAC deposition in the endomysial capillaries is pathognomonic for:",
+    "options": [
+      "Polymyositis",
+      "Inclusion Body Myositis",
+      "Dermatomyositis",
+      "Necrotizing Autoimmune Myopathy"
+    ],
+    "correct_answer": "Dermatomyositis",
+    "rationale": "This describes the microvascular ischemic injury unique to Dermatomyositis.",
+    "hint": "The damage occurs at the edges of the muscle fascicles due to capillary dropout."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Erosive Osteoarthritis of the hands is characterized radiographically by which specific finding in the distal interphalangeal joints?",
+    "options": [
+      "Marginal erosions",
+      "Central erosions creating a 'gull-wing' appearance",
+      "Pencil-in-cup deformity",
+      "Bamboo spine"
+    ],
+    "correct_answer": "Central erosions creating a 'gull-wing' appearance",
+    "rationale": "Central erosions with bony proliferation are the hallmark of inflammatory Erosive OA.",
+    "hint": "Think of a bird in flight."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which enzyme is the primary driver of Type II collagen destruction in Osteoarthritis?",
+    "options": [
+      "MMP-1",
+      "MMP-13",
+      "ADAMTS-4",
+      "Cathepsin K"
+    ],
+    "correct_answer": "MMP-13",
+    "rationale": "MMP-13 (Collagenase-3) specifically cleaves Type II collagen, leading to irreversible cartilage damage.",
+    "hint": "It is a matrix metalloproteinase highly upregulated by hypertrophic chondrocytes."
+  },
+  {
+    "category": "Grand Test",
+    "question": "A patient with recurrent auricular chondritis sparing the earlobe and a 'saddle nose' deformity presents with sudden stridor. The most likely cause is:",
+    "options": [
+      "Pulmonary embolism",
+      "Tracheomalacia due to Relapsing Polychondritis",
+      "Anaphylaxis to NSAIDs",
+      "Asthma exacerbation"
+    ],
+    "correct_answer": "Tracheomalacia due to Relapsing Polychondritis",
+    "rationale": "RP attacks cartilaginous structures, and airway collapse is the leading cause of mortality.",
+    "hint": "The disease has weakened the structural support of the central airways."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which genetic mutation links relapsing polychondritis-like features, macrocytic anemia, and bone marrow vacuoles in an elderly male?",
+    "options": [
+      "NLRP3",
+      "UBA1",
+      "MEFV",
+      "NOD2"
+    ],
+    "correct_answer": "UBA1",
+    "rationale": "Somatic mutations in UBA1 cause VEXAS syndrome, a major mimic of systemic inflammatory diseases in older men.",
+    "hint": "This causes VEXAS syndrome."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In Behçet's Disease, the presence of pulmonary artery aneurysms and systemic venous thrombosis is known as:",
+    "options": [
+      "MAGIC syndrome",
+      "Cogan's syndrome",
+      "Hughes-Stovin Syndrome",
+      "Churg-Strauss Syndrome"
+    ],
+    "correct_answer": "Hughes-Stovin Syndrome",
+    "rationale": "This is a variant of Behçet's characterized by the highly lethal combination of DVT and PAA.",
+    "hint": "It combines the deep venous and arterial manifestations."
+  },
+  {
+    "category": "Grand Test",
+    "question": "What is the primary induction therapy for life-threatening Pulmonary Artery Aneurysms in Behçet's Disease?",
+    "options": [
+      "High-dose Warfarin",
+      "High-dose Glucocorticoids + Cyclophosphamide",
+      "Aspirin monotherapy",
+      "Colchicine"
+    ],
+    "correct_answer": "High-dose Glucocorticoids + Cyclophosphamide",
+    "rationale": "Aggressive immunosuppression is required to halt vessel wall inflammation; anticoagulation is often contraindicated due to bleed risk.",
+    "hint": "Treat it like a severe systemic vasculitis, not a simple clot."
+  },
+  {
+    "category": "Grand Test",
+    "question": "A patient with periodic fevers lasting 10 days, periorbital edema, and a migratory rash over painful muscles likely has a mutation in:",
+    "options": [
+      "MEFV",
+      "TNFRSF1A",
+      "MVK",
+      "NLRP3"
+    ],
+    "correct_answer": "TNFRSF1A",
+    "rationale": "These are the classic features of TRAPS (TNF Receptor-Associated Periodic Syndrome).",
+    "hint": "The fevers are notoriously long, exceeding the typical 1-3 days of FMF."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which of the following is the drug of choice for a patient with FMF who continues to have 3 attacks per month despite maximum tolerated Colchicine?",
+    "options": [
+      "Methotrexate",
+      "Anakinra or Canakinumab",
+      "Rituximab",
+      "Etanercept"
+    ],
+    "correct_answer": "Anakinra or Canakinumab",
+    "rationale": "IL-1 blockade is the standard of care for colchicine-resistant Familial Mediterranean Fever.",
+    "hint": "Target the cytokine produced by the hyperactive inflammasome."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which of the following DMARDs requires a mandatory washout procedure with Cholestyramine if a female patient wishes to conceive?",
+    "options": [
+      "Methotrexate",
+      "Leflunomide",
+      "Sulfasalazine",
+      "Hydroxychloroquine"
+    ],
+    "correct_answer": "Leflunomide",
+    "rationale": "Leflunomide undergoes enterohepatic circulation and can remain in the body for years without chemical washout.",
+    "hint": "This drug inhibits pyrimidine synthesis."
+  },
+  {
+    "category": "Grand Test",
+    "question": "The highest risk period for the development of Anti-Ro/La mediated Congenital Heart Block in the fetus is:",
+    "options": [
+      "4-8 weeks gestation",
+      "16-24 weeks gestation",
+      "32-36 weeks gestation",
+      "During delivery"
+    ],
+    "correct_answer": "16-24 weeks gestation",
+    "rationale": "This is the window of fetal cardiac conduction system development and vulnerability to maternal antibodies.",
+    "hint": "Screening echocardiograms are heavily concentrated in the second trimester."
+  },
+  {
+    "category": "Grand Test",
+    "question": "According to the 2019 EULAR/ACR Criteria for SLE, which of the following acts as the mandatory entry criterion?",
+    "options": [
+      "ANA titer ≥ 1:80 on HEp-2 cells",
+      "Positive Anti-dsDNA",
+      "Biopsy-proven Lupus Nephritis",
+      "Malar rash"
+    ],
+    "correct_answer": "ANA titer ≥ 1:80 on HEp-2 cells",
+    "rationale": "Without this positive ANA titer, a patient cannot be classified as having SLE under the 2019 criteria.",
+    "hint": "It is a highly sensitive screening test."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which novel biologic agent targets the Type I Interferon Receptor (IFNAR) and is approved for systemic SLE?",
+    "options": [
+      "Belimumab",
+      "Anifrolumab",
+      "Voclosporin",
+      "Avacopan"
+    ],
+    "correct_answer": "Anifrolumab",
+    "rationale": "Anifrolumab blocks the 'interferon signature' by targeting the shared Type I interferon receptor.",
+    "hint": "It proved effective in the TULIP clinical trials."
+  },
+  {
+    "category": "Grand Test",
+    "question": "A patient with APS presents with thrombosis in the brain, kidneys, and lungs occurring over 4 days. Which treatment regimen is indicated for this Catastrophic APS?",
+    "options": [
+      "Warfarin and Aspirin",
+      "Triple Therapy: Anticoagulation, High-dose Steroids, and PLEX/IVIG",
+      "Rituximab monotherapy",
+      "DOAC (Rivaroxaban)"
+    ],
+    "correct_answer": "Triple Therapy: Anticoagulation, High-dose Steroids, and PLEX/IVIG",
+    "rationale": "CAPS requires immediate and aggressive multimodal suppression of the thrombotic storm.",
+    "hint": "It requires hitting the disease from three different pharmacological angles."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Under the 2023 ACR/EULAR classification criteria for APS, which laboratory test carries the highest weighted score?",
+    "options": [
+      "Anti-cardiolipin IgM",
+      "Lupus Anticoagulant (LA)",
+      "Anti-beta-2-Glycoprotein I IgA",
+      "VDRL false positive"
+    ],
+    "correct_answer": "Lupus Anticoagulant (LA)",
+    "rationale": "LA is the strongest predictor of clinical thrombosis and carries the highest weight in the new criteria.",
+    "hint": "It is a functional clotting assay."
+  },
+  {
+    "category": "Grand Test",
+    "question": "The GiACTA trial established which drug as the first effective steroid-sparing agent for Giant Cell Arteritis?",
+    "options": [
+      "Tocilizumab",
+      "Infliximab",
+      "Rituximab",
+      "Abatacept"
+    ],
+    "correct_answer": "Tocilizumab",
+    "rationale": "This IL-6 receptor antagonist is now the standard of care for maintaining remission in GCA.",
+    "hint": "It targets the cytokine responsible for the high ESR and CRP."
+  },
+  {
+    "category": "Grand Test",
+    "question": "A 22-year-old female presents with claudication of the left arm and absent radial pulses. MRA shows stenosis of the left subclavian artery. What is the most likely diagnosis?",
+    "options": [
+      "Giant Cell Arteritis",
+      "Takayasu Arteritis",
+      "Polyarteritis Nodosa",
+      "Fibromuscular dysplasia"
+    ],
+    "correct_answer": "Takayasu Arteritis",
+    "rationale": "The 'pulseless disease' typically affects females under 40 and involves the aortic arch branches.",
+    "hint": "Age is the primary discriminator between this and GCA."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which of the following features strongly differentiates Polyarteritis Nodosa (PAN) from Microscopic Polyangiitis (MPA)?",
+    "options": [
+      "Presence of neuropathy",
+      "Absence of Glomerulonephritis in PAN",
+      "Presence of skin ulcers",
+      "Positive ANCA in PAN"
+    ],
+    "correct_answer": "Absence of Glomerulonephritis in PAN",
+    "rationale": "PAN is a medium-vessel disease that classically spares the glomerular capillaries, unlike MPA.",
+    "hint": "Look at the functional unit of the kidney."
+  },
+  {
+    "category": "Grand Test",
+    "question": "The 'string of beads' appearance on mesenteric angiography in a patient with post-prandial abdominal pain is diagnostic of:",
+    "options": [
+      "Takayasu Arteritis",
+      "Polyarteritis Nodosa (PAN)",
+      "IgA Vasculitis",
+      "Kawasaki Disease"
+    ],
+    "correct_answer": "Polyarteritis Nodosa (PAN)",
+    "rationale": "The alternating microaneurysms and stenoses create this classic angiographic pattern.",
+    "hint": "This is a medium-vessel vasculitis."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In the PEXIVAS trial for ANCA-associated vasculitis, Plasma Exchange (PLEX) was shown to:",
+    "options": [
+      "Significantly reduce the risk of End-Stage Kidney Disease",
+      "Provide no significant reduction in the composite outcome of ESKD or death",
+      "Be superior to Rituximab",
+      "Cure alveolar hemorrhage immediately"
+    ],
+    "correct_answer": "Provide no significant reduction in the composite outcome of ESKD or death",
+    "rationale": "This landmark trial shifted guidelines away from routine PLEX in severe AAV.",
+    "hint": "The results were largely 'negative' regarding long-term renal survival."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Avacopan is used in ANCA-associated vasculitis to block which specific molecular target?",
+    "options": [
+      "TNF-alpha",
+      "C5a Receptor",
+      "IL-6 Receptor",
+      "CD20"
+    ],
+    "correct_answer": "C5a Receptor",
+    "rationale": "It blocks the terminal complement pathway, reducing neutrophil priming and allowing for steroid-sparing induction.",
+    "hint": "It acts on the alternative complement pathway."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which of the following best describes Type II Cryoglobulinemia?",
+    "options": [
+      "Monoclonal IgM without RF activity",
+      "Mixed Monoclonal IgM with Rheumatoid Factor activity + Polyclonal IgG",
+      "Polyclonal IgM + Polyclonal IgG",
+      "IgA immune complexes"
+    ],
+    "correct_answer": "Mixed Monoclonal IgM with Rheumatoid Factor activity + Polyclonal IgG",
+    "rationale": "This is the classic profile for Hepatitis C-associated cryoglobulinemia.",
+    "hint": "It contains a single 'spike' that targets a broad group of antibodies."
+  },
+  {
+    "category": "Grand Test",
+    "question": "The pathogenic immune complexes in Henoch-Schönlein Purpura (IgA Vasculitis) are primarily composed of:",
+    "options": [
+      "Polymeric IgA2",
+      "Galactose-deficient IgA1 (Gd-IgA1)",
+      "Secretory IgA",
+      "Monomeric IgM"
+    ],
+    "correct_answer": "Galactose-deficient IgA1 (Gd-IgA1)",
+    "rationale": "Abnormal glycosylation creates a neo-antigen that triggers complex formation and vascular deposition.",
+    "hint": "It's a specific defect in the 'sugar' side chains."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In the FRAX risk assessment tool, which clinical risk factor is heavily weighted but does NOT require a DXA scan input?",
+    "options": [
+      "Lumbar spine T-score",
+      "Parental history of fractured hip",
+      "Serum Vitamin D level",
+      "Current calcium intake"
+    ],
+    "correct_answer": "Parental history of fractured hip",
+    "rationale": "This is a major, independent clinical predictor of fracture risk used in the FRAX calculator.",
+    "hint": "It is a genetic/familial factor."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which complication is almost guaranteed if Denosumab is discontinued without starting a 'bridge' antiresorptive agent like a bisphosphonate?",
+    "options": [
+      "Osteonecrosis of the jaw",
+      "A massive rebound in osteoclast activity leading to rapid bone loss and multiple vertebral fractures",
+      "Atypical femoral fractures",
+      "Hypercalcemia"
+    ],
+    "correct_answer": "A massive rebound in osteoclast activity leading to rapid bone loss and multiple vertebral fractures",
+    "rationale": "Denosumab's RANKL inhibition is highly reversible; stopping it unleashes pent-up osteoclast precursors.",
+    "hint": "The 'brake' on bone resorption is suddenly removed."
+  },
+  {
+    "category": "Grand Test",
+    "question": "A male infant with failure to thrive and absent lymphoid tissue shows no T-cells, no B-cells, and no NK cells on flow cytometry (T- B- NK-). The most likely cause is:",
+    "options": [
+      "Common gamma chain mutation",
+      "Adenosine Deaminase (ADA) deficiency",
+      "RAG mutation",
+      "DiGeorge syndrome"
+    ],
+    "correct_answer": "Adenosine Deaminase (ADA) deficiency",
+    "rationale": "Toxic metabolites in ADA deficiency destroy all three lymphocyte lineages.",
+    "hint": "It is a metabolic defect in purine salvage."
+  },
+  {
+    "category": "Grand Test",
+    "question": "The Dihydrorhodamine (DHR) 123 assay is the gold standard flow cytometry test for diagnosing:",
+    "options": [
+      "SCID",
+      "Chronic Granulomatous Disease (CGD)",
+      "CVID",
+      "Wiskott-Aldrich Syndrome"
+    ],
+    "correct_answer": "Chronic Granulomatous Disease (CGD)",
+    "rationale": "The DHR test measures the neutrophil's ability to produce an oxidative burst (deficient in CGD).",
+    "hint": "It tests the function of the NADPH oxidase complex."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Fibromyalgia pain is classified as 'Nociplastic'. This is primarily driven by:",
+    "options": [
+      "Ongoing tissue inflammation",
+      "Central sensitization with elevated excitatory neurotransmitters in the CSF",
+      "Nerve compression",
+      "Psychiatric delusion"
+    ],
+    "correct_answer": "Central sensitization with elevated excitatory neurotransmitters in the CSF",
+    "rationale": "Fibromyalgia involves an amplification of pain signals in the CNS, not peripheral damage.",
+    "hint": "The 'volume dial' for pain in the brain is turned up."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Complex Regional Pain Syndrome (CRPS) Type II differs from Type I because Type II involves:",
+    "options": [
+      "No known trauma",
+      "A definable major nerve injury",
+      "Bilateral symptoms",
+      "A positive ANA"
+    ],
+    "correct_answer": "A definable major nerve injury",
+    "rationale": "Type II (formerly Causalgia) is triggered by specific nerve damage, whereas Type I is not.",
+    "hint": "Look for a clear anatomical lesion."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In Systemic Sclerosis, the presence of Anti-RNA Polymerase III antibodies warns the clinician to be highly vigilant for:",
+    "options": [
+      "Pulmonary Arterial Hypertension",
+      "Scleroderma Renal Crisis and Malignancy",
+      "CREST syndrome",
+      "Overlap with Myositis"
+    ],
+    "correct_answer": "Scleroderma Renal Crisis and Malignancy",
+    "rationale": "This antibody is a strong predictor of SRC, rapid skin thickening, and synchronous cancer.",
+    "hint": "Watch out for sudden spikes in blood pressure."
+  },
+  {
+    "category": "Grand Test",
+    "question": "What is the absolute contraindication for a patient presenting with Scleroderma Renal Crisis?",
+    "options": [
+      "Captopril",
+      "Beta-blockers",
+      "Calcium channel blockers",
+      "Hemodialysis"
+    ],
+    "correct_answer": "Beta-blockers",
+    "rationale": "Beta-blockers can worsen vasospasm (Raynaud's) and do not address the core renin-angiotensin pathology of SRC.",
+    "hint": "Avoid drugs that cause peripheral vasoconstriction."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In the SENSCIS trial, Nintedanib was shown to be effective in Systemic Sclerosis by:",
+    "options": [
+      "Reversing skin fibrosis",
+      "Slowing the annual rate of decline in Forced Vital Capacity (FVC)",
+      "Curing pulmonary hypertension",
+      "Treating digital ulcers"
+    ],
+    "correct_answer": "Slowing the annual rate of decline in Forced Vital Capacity (FVC)",
+    "rationale": "It acts as an antifibrotic in the lungs, preserving lung function over time.",
+    "hint": "It targets the Interstitial Lung Disease component."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Why is the co-administration of Methotrexate highly recommended when starting a patient on Infliximab?",
+    "options": [
+      "To treat pain faster",
+      "To reduce the formation of Anti-Drug Antibodies (ADAs) against the chimeric biologic",
+      "To protect the liver",
+      "To increase TNF production"
+    ],
+    "correct_answer": "To reduce the formation of Anti-Drug Antibodies (ADAs) against the chimeric biologic",
+    "rationale": "Methotrexate prevents the immune system from neutralizing the mouse-derived portions of the drug.",
+    "hint": "The immune system recognizes the drug as 'foreign'."
+  },
+  {
+    "category": "Grand Test",
+    "question": "If a patient on Rituximab requires a pneumococcal vaccine, when is the optimal time to administer it?",
+    "options": [
+      "During the infusion",
+      "At least 4 weeks before the next dose, or 6 months after the last dose",
+      "1 week after the infusion",
+      "Never"
+    ],
+    "correct_answer": "At least 4 weeks before the next dose, or 6 months after the last dose",
+    "rationale": "The body needs functional B-cells to mount an antibody response to the vaccine.",
+    "hint": "Vaccinate when B-cell counts are highest."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Abatacept modulates the immune response by mimicking CTLA-4. It achieves this by binding directly to:",
+    "options": [
+      "CD28 on T-cells",
+      "CD80 and CD86 on Antigen Presenting Cells",
+      "The T-cell receptor",
+      "MHC Class II"
+    ],
+    "correct_answer": "CD80 and CD86 on Antigen Presenting Cells",
+    "rationale": "This blocks the crucial 'Signal 2' required for T-cell activation.",
+    "hint": "It binds to the co-stimulatory ligands on the 'presenting' cell."
+  },
+  {
+    "category": "Grand Test",
+    "question": "The 'Double Contour Sign' on Musculoskeletal Ultrasound is highly specific for:",
+    "options": [
+      "Rheumatoid arthritis",
+      "Monosodium Urate crystal deposition (Gout)",
+      "CPPD (Pseudogout)",
+      "Osteoarthritis"
+    ],
+    "correct_answer": "Monosodium Urate crystal deposition (Gout)",
+    "rationale": "Urate crystals coat the superficial margin of the hyaline cartilage, creating a bright second line.",
+    "hint": "Crystals are sitting on top of the cartilage."
+  },
+  {
+    "category": "Grand Test",
+    "question": "On an MRI of the Sacroiliac joints, active bone marrow edema is best visualized as a bright signal on which sequence?",
+    "options": [
+      "T1-weighted",
+      "STIR (Short Tau Inversion Recovery)",
+      "T2-weighted without fat sat",
+      "CT scan"
+    ],
+    "correct_answer": "STIR (Short Tau Inversion Recovery)",
+    "rationale": "STIR suppresses fat signals, making the water content of active edema stand out brightly.",
+    "hint": "This sequence 'blacks out' the normal fat marrow."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In Polymyalgia Rheumatica (PMR), which imaging finding on ultrasound of the shoulder is highly characteristic?",
+    "options": [
+      "Massive rotator cuff tear",
+      "Bilateral subacromial-subdeltoid bursitis and biceps tenosynovitis",
+      "Severe erosive changes of the humeral head",
+      "Joint space narrowing"
+    ],
+    "correct_answer": "Bilateral subacromial-subdeltoid bursitis and biceps tenosynovitis",
+    "rationale": "PMR is fundamentally an extra-articular disease causing severe inflammation of the bursae and tendon sheaths.",
+    "hint": "The inflammation occurs around the joint, not inside it."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Ustekinumab, used in Psoriatic Arthritis, specifically targets:",
+    "options": [
+      "TNF-alpha",
+      "The p40 subunit shared by IL-12 and IL-23",
+      "The p19 subunit of IL-23 only",
+      "IL-17A directly"
+    ],
+    "correct_answer": "The p40 subunit shared by IL-12 and IL-23",
+    "rationale": "Blocking p40 neutralizes both the Th1 (IL-12) and Th17 (IL-23) pathways.",
+    "hint": "It hits two cytokines with one shot."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Which of the following is true regarding Lupus Nephritis Class V (Membranous)?",
+    "options": [
+      "It always requires aggressive Cyclophosphamide",
+      "It typically presents with nephrotic-range proteinuria and 'spike and dome' deposits",
+      "It features rapidly progressive crescent formation",
+      "It is completely benign"
+    ],
+    "correct_answer": "It typically presents with nephrotic-range proteinuria and 'spike and dome' deposits",
+    "rationale": "Class V causes subepithelial immune deposits and massive protein loss without severe active proliferation.",
+    "hint": "It mimics idiopathic membranous nephropathy."
+  },
+  {
+    "category": "Grand Test",
+    "question": "What is the primary mechanism of action of Voclosporin, recently approved for Lupus Nephritis based on the AURORA trial?",
+    "options": [
+      "B-cell depletion",
+      "Calcineurin inhibition",
+      "Complement C5 inhibition",
+      "Interferon receptor blockade"
+    ],
+    "correct_answer": "Calcineurin inhibition",
+    "rationale": "Voclosporin is a novel CNI that stabilizes podocytes and suppresses T-cells without the need for drug-level monitoring.",
+    "hint": "It is in the same family as Cyclosporine and Tacrolimus."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In the treatment of Kawasaki Disease, IVIG is most effective at preventing Coronary Artery Aneurysms if given:",
+    "options": [
+      "Within the first 10 days of illness",
+      "After the fever subsides",
+      "On day 21",
+      "Only if aneurysms are already seen on Echo"
+    ],
+    "correct_answer": "Within the first 10 days of illness",
+    "rationale": "Early administration halts the severe vasculitis before the vessel wall is irreversibly damaged.",
+    "hint": "Catch the disease during the acute febrile window."
+  },
+  {
+    "category": "Grand Test",
+    "question": "The MIRRA trial demonstrated the efficacy of Mepolizumab in EGPA. Mepolizumab targets:",
+    "options": [
+      "IL-4",
+      "IL-5",
+      "IL-13",
+      "IgE"
+    ],
+    "correct_answer": "IL-5",
+    "rationale": "IL-5 is the crucial survival and differentiation factor for eosinophils.",
+    "hint": "It directly kills the source of the eosinophilia."
+  },
+  {
+    "category": "Grand Test",
+    "question": "A patient with CVID will characteristically lack which specific B-cell subset on flow cytometry?",
+    "options": [
+      "Naive B-cells",
+      "CD27+ Switched Memory B-cells",
+      "Transitional B-cells",
+      "Pro-B cells"
+    ],
+    "correct_answer": "CD27+ Switched Memory B-cells",
+    "rationale": "The core defect in CVID is the inability of B-cells to mature into memory cells and plasma cells.",
+    "hint": "They fail to 'remember' past infections."
+  },
+  {
+    "category": "Grand Test",
+    "question": "Teriparatide has a lifetime administration limit of two years due to a black-box warning (based on rat models) for:",
+    "options": [
+      "Breast cancer",
+      "Osteosarcoma",
+      "Leukemia",
+      "Renal cell carcinoma"
+    ],
+    "correct_answer": "Osteosarcoma",
+    "rationale": "Prolonged high-dose PTH exposure caused osteosarcoma in rodents, mandating strict time limits in humans.",
+    "hint": "Think of a primary malignant bone tumor."
+  },
+  {
+    "category": "Grand Test",
+    "question": "In Lateral Epicondylitis (Tennis Elbow), the pathology is centered at the origin of the:",
+    "options": [
+      "Extensor Carpi Ulnaris",
+      "Extensor Carpi Radialis Brevis (ECRB)",
+      "Flexor Carpi Radialis",
+      "Brachioradialis"
+    ],
+    "correct_answer": "Extensor Carpi Radialis Brevis (ECRB)",
+    "rationale": "Microtears at the origin of the ECRB are the primary anatomical cause of tennis elbow.",
+    "hint": "It's an extensor muscle located on the radial side."
+  },
+  {
+    "category": "Grand Test",
+    "question": "The presence of Anti-NXP2 autoantibodies in a patient with Dermatomyositis carries a high risk for the development of:",
+    "options": [
+      "Rapidly progressive ILD",
+      "Severe Calcinosis Cutis (especially in juveniles)",
+      "Cardiac conduction blocks",
+      "Mechanic's hands"
+    ],
+    "correct_answer": "Severe Calcinosis Cutis (especially in juveniles)",
+    "rationale": "Anti-NXP2 is strongly linked to extensive calcium deposits under the skin and a severe disease course.",
+    "hint": "Think of hard, white nodules forming under the skin."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "Which of the following biologic agents lacks an Fc region and is therefore considered the safest option for use throughout pregnancy?",
+    "options": [
+      "Etanercept",
+      "Infliximab",
+      "Certolizumab pegol",
+      "Golimumab"
+    ],
+    "correct_answer": "Certolizumab pegol",
+    "rationale": "Certolizumab is a pegylated Fab' fragment without an Fc region, minimizing active transport across the placenta.",
+    "hint": "Look for the molecule that isn't a full antibody structure."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "Felty’s Syndrome is characterized by the triad of Rheumatoid Arthritis, Splenomegaly, and:",
+    "options": [
+      "Thrombocytopenia",
+      "Neutropenia",
+      "Anemia",
+      "Pancytopenia"
+    ],
+    "correct_answer": "Neutropenia",
+    "rationale": "The classic triad is RA, Splenomegaly, and Granulocytopenia (Neutropenia).",
+    "hint": "It involves a dangerously low white cell count."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "Which specific HLA-DRB1 allele is most strongly associated with severe, erosive Rheumatoid Arthritis in Caucasian populations?",
+    "options": [
+      "HLA-DRB1*0301",
+      "HLA-DRB1*0401",
+      "HLA-DRB1*1501",
+      "HLA-DRB1*0701"
+    ],
+    "correct_answer": "HLA-DRB1*0401",
+    "rationale": "The *0401 and *0404 alleles carry the Shared Epitope and are linked to aggressive disease.",
+    "hint": "It's part of the 'DR4' serotype."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "Patients prescribed Tocilizumab must be monitored for which specific metabolic side effect?",
+    "options": [
+      "Hyperuricemia",
+      "Dyslipidemia (Elevated LDL/TG)",
+      "Hypocalcemia",
+      "Hypoglycemia"
+    ],
+    "correct_answer": "Dyslipidemia (Elevated LDL/TG)",
+    "rationale": "IL-6 blockade affects lipid metabolism, frequently leading to elevated cholesterol levels.",
+    "hint": "It affects cholesterol processing in the liver."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "Which site of the cervical spine is most commonly affected in Rheumatoid Arthritis, potentially leading to myelopathy?",
+    "options": [
+      "Atlanto-axial joint (C1-C2)",
+      "C4-C5 disc space",
+      "C7-T1 junction",
+      "Subaxial facet joints"
+    ],
+    "correct_answer": "Atlanto-axial joint (C1-C2)",
+    "rationale": "Erosion of the transverse ligament leads to C1-C2 subluxation.",
+    "hint": "It is located at the very top of the neck."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "Which antibody is most specific for Rheumatoid Arthritis and has prognostic value for radiographic progression?",
+    "options": [
+      "Rheumatoid Factor (IgM)",
+      "Anti-CCP (ACPA)",
+      "Anti-MCV",
+      "ANA"
+    ],
+    "correct_answer": "Anti-CCP (ACPA)",
+    "rationale": "ACPA is >95% specific and correlates strongly with erosive disease.",
+    "hint": "It targets citrullinated peptides."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "Herpes Zoster reactivation is a distinct safety concern particularly associated with which class of drugs?",
+    "options": [
+      "TNF Inhibitors",
+      "IL-1 Inhibitors",
+      "JAK Inhibitors",
+      "B-cell depleting agents"
+    ],
+    "correct_answer": "JAK Inhibitors",
+    "rationale": "JAK inhibitors (Tofacitinib, Baricitinib) have a higher incidence of Shingles compared to biologics.",
+    "hint": "These are small molecule oral targeted synthetic DMARDs."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "A patient on Methotrexate and Infliximab develops new-onset heart failure. What is the recommended action?",
+    "options": [
+      "Add Digoxin",
+      "Discontinue Infliximab immediately",
+      "Switch to Etanercept",
+      "Reduce Methotrexate dose"
+    ],
+    "correct_answer": "Discontinue Infliximab immediately",
+    "rationale": "TNF inhibitors are contraindicated in NYHA Class III/IV heart failure and should be stopped if new HF develops.",
+    "hint": "TNF inhibitors can worsen heart failure."
+  },
+  {
+    "category": "Rheumatoid Arthritis",
+    "question": "Leflunomide inhibits pyrimidine synthesis by targeting which enzyme?",
+    "options": [
+      "Dihydrofolate Reductase",
+      "Dihydroorotate Dehydrogenase (DHODH)",
+      "Inosine Monophosphate Dehydrogenase",
+      "Janus Kinase"
+    ],
+    "correct_answer": "Dihydroorotate Dehydrogenase (DHODH)",
+    "rationale": "This is the specific mechanism of Leflunomide, preventing T-cell expansion.",
+    "hint": "Look for the enzyme specific to 'de novo' pyrimidine synthesis."
+  },
+  {
+    "category": "Lupus Nephritis",
+    "question": "Which histological class of Lupus Nephritis is defined by the presence of subepithelial immune deposits on electron microscopy and typically presents as nephrotic syndrome?",
+    "options": [
+      "Class II",
+      "Class III",
+      "Class IV",
+      "Class V"
+    ],
+    "correct_answer": "Class V",
+    "rationale": "Class V is Membranous LN, characterized by subepithelial deposits.",
+    "hint": "This class mimics idiopathic membranous nephropathy."
+  },
+  {
+    "category": "Lupus Nephritis",
+    "question": "The 'Wire Loop' lesion seen on light microscopy in Class IV Lupus Nephritis corresponds to which finding on Electron Microscopy?",
+    "options": [
+      "Subepithelial humps",
+      "Subendothelial deposits",
+      "Intramembranous deposits",
+      "Mesangial matrix expansion"
+    ],
+    "correct_answer": "Subendothelial deposits",
+    "rationale": "Massive subendothelial deposits create the thickened capillary wall appearance known as wire loops.",
+    "hint": "These deposits sit right underneath the endothelial cells."
+  },
+  {
+    "category": "Lupus Nephritis",
+    "question": "A renal biopsy shows 'Full House' immunofluorescence. This refers to the presence of which components?",
+    "options": [
+      "IgG, IgA, IgM, C3, and C1q",
+      "IgG and C3 only",
+      "IgG, IgA, and C4",
+      "ANCA and anti-GBM antibodies"
+    ],
+    "correct_answer": "IgG, IgA, IgM, C3, and C1q",
+    "rationale": "This combination is highly characteristic of LN, showing that all arms of the immune system are attacking the glomerulus.",
+    "hint": "It literally involves 'all the major players' of immunoglobulin and complement."
+  },
+  {
+    "category": "Lupus Nephritis",
+    "question": "Which medication is considered superior to Azathioprine for the maintenance of remission in proliferative Lupus Nephritis?",
+    "options": [
+      "Cyclophosphamide",
+      "Mycophenolate Mofetil (MMF)",
+      "Methotrexate",
+      "Leflunomide"
+    ],
+    "correct_answer": "Mycophenolate Mofetil (MMF)",
+    "rationale": "The ALMS trial demonstrated MMF's superiority over AZA for maintaining renal remission.",
+    "hint": "This drug inhibits IMPDH."
+  },
+  {
+    "category": "Lupus Nephritis",
+    "question": "Hematoxylin bodies (the tissue equivalent of LE cells) are most likely to be seen in which condition?",
+    "options": [
+      "Wegener's Granulomatosis",
+      "Lupus Nephritis",
+      "Post-streptococcal GN",
+      "Diabetic Nephropathy"
+    ],
+    "correct_answer": "Lupus Nephritis",
+    "rationale": "Hematoxylin bodies are highly specific for SLE/LN, representing denatured nuclear material.",
+    "hint": "They are the hallmark 'staining' bodies in this autoimmune disease."
+  },
+  {
+    "category": "Lupus Nephritis",
+    "question": "Which complement component deficiency is specifically associated with the severe development of Class IV LN and SLE?",
+    "options": [
+      "C1q",
+      "C5",
+      "Factor H",
+      "Properdin"
+    ],
+    "correct_answer": "C1q",
+    "rationale": "C1q deficiency has the highest association (>90%) with severe SLE/LN.",
+    "hint": "The first component of the classical pathway."
+  }
+]
