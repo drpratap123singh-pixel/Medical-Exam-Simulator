@@ -4,6 +4,12 @@ import os
 import requests
 import google.generativeai as genai
 import PyPDF2
+def fetch_data(url):
+    try:
+        response = requests.get(url)
+        return response.json()
+    except Exception as e:
+        return None
 from datetime import datetime
 
 # --- PAGE CONFIG ---
@@ -231,7 +237,7 @@ def render_dashboard():
     
     api_key = st.sidebar.text_input("Enter Google Gemini API Key", type="password")
     
-    tab1, tab2, tab3, tab4 = st.tabs(["🧠 Generate New Exam", "📄 From PDF", "📥 Import JSON", "📊 Past Exams & Grand Tests"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["🧠 Generate New Exam", "📄 From PDF", "📥 Import JSON", "📊 Past Exams & Grand Tests", "📚 Question Bank"])
     
     with tab1:
         st.subheader("Generate Exam by Topic")
@@ -307,7 +313,34 @@ def render_dashboard():
                     if cols[2].button("🔄 Retake Exam", key=f"ret_{rec['id']}", use_container_width=True):
                         load_past_exam(rec, is_retake=True)
                         st.rerun()
+    with tab5:
+        st.header("Medical Super-Specialty Question Bank")
+    
+        # Selection Menu
+        quiz_choice = st.selectbox(
+        "Select a Topic to Start Test:",
+        ["Select Topic", "Systemic Sclerosis", "Immunology (SAD)", "General Medicine"]
+        )
 
+    # Use your actual Gist RAW URLs here
+    URL_MAP = {
+        "Systemic Sclerosis": "https://gist.githubusercontent.com/drpratap123singh-pixel/0c89646350ae70ae3dc4353fe9d38f15/raw/c8ad499c80db51cb6063ea0c4369527e02919932/ssc_quiz.json",
+        "Immunology (SAD)": "PASTE_YOUR_IMMUNOLOGY_GIST_RAW_URL_HERE"
+    }
+
+    if quiz_choice != "Select Topic":
+        # Fetch data from the URL
+        url = URL_MAP.get(quiz_choice)
+        questions = fetch_data(url) # Ensure your fetch_data function is defined at the top of app_exam.py
+        
+        if questions:
+            # Start the Exam using your app's existing start_exam function
+            if st.button(f"Begin {quiz_choice} CBT"):
+                start_exam(questions)
+                st.rerun()
+        else:
+            st.error("Could not load the quiz. Please check the URL in the code.")
+            
 # --- 7. EXAM UI ---
 def render_exam_ui():
     idx = st.session_state.current_q_idx
@@ -484,3 +517,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
