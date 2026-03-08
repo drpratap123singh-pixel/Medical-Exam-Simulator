@@ -20,7 +20,7 @@ quiz_choice = st.sidebar.radio(
 
 # Define your Gist URLs here
 URL_MAP = {
-    "https://gist.githubusercontent.com/drpratap123singh-pixel/0c89646350ae70ae3dc4353fe9d38f15/raw/c8ad499c80db51cb6063ea09f0ffb7c5a900a3f0/ssc_quiz.json", 
+    "Systemic Sclerosis": "https://gist.githubusercontent.com/drpratap123singh-pixel/0c89646350ae70ae3dc4353fe9d38f15/raw/c8ad499c80db51cb6063ea09f0ffb7c5a900a3f0/ssc_quiz.json", 
     "Immunology (SAD)": "YOUR_SECOND_GIST_URL_HERE"
 }
 
