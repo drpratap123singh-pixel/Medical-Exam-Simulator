@@ -324,7 +324,7 @@ def render_dashboard():
 
     # Use your actual Gist RAW URLs here
     URL_MAP = {
-        "Systemic Sclerosis": "https://gist.githubusercontent.com/drpratap123singh-pixel/0c89646350ae70ae3dc4353fe9d38f15/raw/c8ad499c80db51cb6063ea0c4369527e02919932/ssc_quiz.json",
+        "Systemic Sclerosis": "https://gist.githubusercontent.com/drpratap123singh-pixel/0c89646350ae70ae3dc4353fe9d38f15/raw/ssc_quiz.json",
         "Immunology (SAD)": "PASTE_YOUR_IMMUNOLOGY_GIST_RAW_URL_HERE"
     }
 
@@ -517,4 +517,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
