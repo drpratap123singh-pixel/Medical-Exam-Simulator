@@ -44,6 +44,8 @@ if 'responses' not in st.session_state:
     st.session_state.responses = {}
 if 'statuses' not in st.session_state:
     st.session_state.statuses = {} 
+if 'guesses' not in st.session_state:
+    st.session_state.guesses = {}
 
 # --- 3. AI GENERATION LOGIC (Dynamic Model Fetching) ---
 def extract_text_from_pdf(pdf_file):
@@ -162,6 +164,7 @@ def start_exam(questions):
     st.session_state.mode = 'exam'
     st.session_state.current_q_idx = 0
     st.session_state.responses = {}
+    st.session_state.guesses = {i: False for i in range(len(questions))}
     st.session_state.statuses = {i: 0 for i in range(len(questions))}
     st.session_state.statuses[0] = 2 # First question visited
 
@@ -211,6 +214,9 @@ def clear_response():
     st.session_state.responses.pop(idx, None)
     if f"radio_{idx}" in st.session_state:
         st.session_state[f"radio_{idx}"] = None
+    st.session_state.guesses[idx] = False
+    if f"guess_cb_{idx}" in st.session_state:
+        st.session_state[f"guess_cb_{idx}"] = False
     st.session_state.statuses[idx] = 2 
 
 def jump_to_question(idx):
@@ -242,7 +248,8 @@ def submit_exam():
         "score": score,
         "total": total,
         "questions": st.session_state.active_questions,
-        "responses": st.session_state.responses
+        "responses": st.session_state.responses,
+        "guesses": st.session_state.guesses
     }
     
     st.session_state.history.insert(0, exam_record) # Add to top of history
@@ -257,7 +264,8 @@ def load_past_exam(record, is_retake=False):
     if is_retake:
         start_exam(record['questions'])
     else:
-        st.session_state.responses = record['responses']
+        st.session_state.responses = record.get('responses', {})
+        st.session_state.guesses = record.get('guesses', {})
         st.session_state.mode = 'review'
 
 
@@ -387,7 +395,8 @@ def render_exam_ui():
     col_main, col_side = st.columns([3.5, 1.5], gap="medium")
     
     with col_main:
-        with st.container(height=650, border=True):
+        # Reduced height so buttons stay fixed at the bottom of the screen without needing to scroll the main page
+        with st.container(height=480, border=True):
             st.markdown(f"<div style='text-align:right; color:#d32f2f; font-weight:bold;'>Time Left: 00:32:04</div>", unsafe_allow_html=True)
             st.markdown("<div class='q-type-bar'>Question type : MCQ</div>", unsafe_allow_html=True)
             st.markdown(f"<div class='q-no'>Question no : {idx + 1}</div>", unsafe_allow_html=True)
@@ -402,16 +411,23 @@ def render_exam_ui():
             default_idx = options.index(current_ans) if current_ans in options else None
             
             st.radio("Options", options, index=default_idx, key=f"radio_{idx}", label_visibility="collapsed")
-            st.markdown("<br><label style='color:#555; font-size:14px;'><input type='checkbox'> I am guessing this ℹ️</label>", unsafe_allow_html=True)
             
-        btn_c1, btn_c2, btn_spacer, btn_c3, btn_c4 = st.columns([2.5, 2, 2.5, 2.5, 2])
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # Active Guessing logic
+            is_guessed = st.checkbox("I am guessing this ℹ️", value=st.session_state.guesses.get(idx, False), key=f"guess_cb_{idx}")
+            st.session_state.guesses[idx] = is_guessed
+            
+        # Action Buttons Fixed Below Container (They will no longer be pushed down by long questions)
+        btn_c1, btn_c2, btn_spacer, btn_c3, btn_c4 = st.columns([2.5, 2, 1, 2.5, 2])
         with btn_c1: st.button("Mark for Review & Next", on_click=mark_and_next, use_container_width=True)
         with btn_c2: st.button("Clear Response", on_click=clear_response, use_container_width=True)
         with btn_c3: st.button("Save and Next", on_click=save_and_next, type="primary", use_container_width=True)
         with btn_c4: st.button("Submit", on_click=submit_exam, type="primary", use_container_width=True)
 
     with col_side:
-        with st.container(height=720, border=True):
+        # Adjusted height to match the new left column layout
+        with st.container(height=560, border=True):
             st.markdown("""
             <div class='profile-box'>
                 <div style='font-size:35px; margin-right:10px;'>👤</div>
@@ -459,16 +475,21 @@ def render_review_ui():
     q_data = st.session_state.active_questions[idx]
     total_q = len(st.session_state.active_questions)
     
+    # Calculate regular stats
     correct_count = sum(1 for i, q in enumerate(st.session_state.active_questions) if st.session_state.responses.get(i) == get_correct_answer(q))
     wrong_count = sum(1 for i, q in enumerate(st.session_state.active_questions) if st.session_state.responses.get(i) is not None and st.session_state.responses.get(i) != get_correct_answer(q))
     skipped_count = total_q - correct_count - wrong_count
+
+    # Calculate guessing stats
+    total_guessed = sum(1 for v in st.session_state.guesses.values() if v)
+    guessed_correct = sum(1 for i, q in enumerate(st.session_state.active_questions) if st.session_state.guesses.get(i) and st.session_state.responses.get(i) == get_correct_answer(q))
 
     st.markdown("<div class='top-bar-marrow' style='background-color:#1e3c72;'><span>📊 Exam Review Mode</span></div>", unsafe_allow_html=True)
     
     col_main, col_side = st.columns([3.5, 1.5], gap="medium")
     
     with col_main:
-        with st.container(height=650, border=True):
+        with st.container(height=480, border=True):
             st.markdown(f"<div class='q-no'>Question no : {idx + 1}</div>", unsafe_allow_html=True)
             st.markdown(f"<div class='q-text'>{q_data.get('question', '')}</div>", unsafe_allow_html=True)
             
@@ -497,6 +518,10 @@ def render_review_ui():
             if user_ans is None:
                 st.warning("You skipped this question.")
                 
+            # Show if user guessed this specific question
+            if st.session_state.guesses.get(idx):
+                st.info("🤔 You marked this question as a guess during the exam.")
+                
             st.markdown(f"<div class='rationale-box'><b>Explanation:</b><br>{rationale}</div><br>", unsafe_allow_html=True)
             
         btn_c1, btn_c2, btn_c3 = st.columns([1, 2, 1])
@@ -505,10 +530,11 @@ def render_review_ui():
         with btn_c3: st.button("Next ➡️", on_click=move_to_next, use_container_width=True)
 
     with col_side:
-        with st.container(height=720, border=True):
+        with st.container(height=560, border=True):
             st.markdown(f"""
             <div style='text-align:center; padding:10px; background:#f0f2f6; border-radius:5px; margin-bottom:15px;'>
                 <h2 style='margin:0; color:#1e3c72;'>Score: {correct_count} / {total_q}</h2>
+                <p style='margin:8px 0 0 0; color:#555; font-size:14px;'>You guessed on <b>{total_guessed}</b> questions.<br>Of those guesses, <b>{guessed_correct}</b> were correct.</p>
             </div>
             <div class='legend-grid'>
                 <div>🟩 {correct_count} Correct</div>
