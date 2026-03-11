@@ -45,7 +45,7 @@ if 'responses' not in st.session_state:
 if 'statuses' not in st.session_state:
     st.session_state.statuses = {} 
 
-# --- 3. AI GENERATION LOGIC (Direct API Call) ---
+# --- 3. AI GENERATION LOGIC (Robust Fallback System) ---
 def extract_text_from_pdf(pdf_file):
     reader = PyPDF2.PdfReader(pdf_file)
     text = ""
@@ -54,8 +54,14 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
-    # Connecting directly to the REST API to avoid SDK version 404 errors
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    # A list of models to try in descending order of preference. 
+    # If one returns a 404, it automatically tries the next one.
+    models_to_try = [
+        "gemini-1.5-flash",
+        "gemini-1.5-pro",
+        "gemini-1.0-pro",
+        "gemini-pro"
+    ]
     
     prompt = f"""
     You are an expert medical examiner for the INI SS (super-specialty) exam.
@@ -86,29 +92,47 @@ def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
         }
     }
     
-    try:
-        response = requests.post(url, headers=headers, json=payload)
-        response.raise_for_status() # Check for HTTP errors like 404 or 401
+    last_error = ""
+    
+    for model_name in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
         
-        result = response.json()
-        raw_text = result['candidates'][0]['content']['parts'][0]['text'].strip()
-        
-        # Smart cleanup using regex to find the JSON array even if AI adds conversational text
-        match = re.search(r'\[.*\]', raw_text, re.DOTALL)
-        if match:
-            raw_text = match.group(0)
+        try:
+            response = requests.post(url, headers=headers, json=payload)
             
-        return json.loads(raw_text)
-        
-    except requests.exceptions.HTTPError as err:
-        st.error(f"API Access Error: {err}. Please ensure your API key is correct and active.")
-        return None
-    except json.JSONDecodeError:
-        st.error("The AI returned improperly formatted data. Please try generating again.")
-        return None
-    except Exception as e:
-        st.error(f"Failed to generate questions. Error: {e}")
-        return None
+            # Catch bad API keys immediately before looping
+            if response.status_code == 400 and "API key not valid" in response.text:
+                st.error("Your API Key is invalid. Please check it and try again.")
+                return None
+                
+            response.raise_for_status() 
+            
+            result = response.json()
+            if 'candidates' not in result or not result['candidates']:
+                continue
+                
+            raw_text = result['candidates'][0]['content']['parts'][0]['text'].strip()
+            
+            # Smart cleanup using regex to find the JSON array even if AI adds conversational text
+            match = re.search(r'\[.*\]', raw_text, re.DOTALL)
+            if match:
+                raw_text = match.group(0)
+                
+            return json.loads(raw_text)
+            
+        except requests.exceptions.HTTPError as err:
+            last_error = f"{model_name} failed ({response.status_code})"
+            continue # Move to the next model in the list
+        except json.JSONDecodeError:
+            last_error = f"{model_name} returned malformed JSON"
+            continue
+        except Exception as e:
+            last_error = str(e)
+            continue
+            
+    # If the loop finishes and nothing worked, display the error
+    st.error(f"Failed to connect to Google AI. Please ensure your API key has correct permissions. Last Error: {last_error}")
+    return None
 
 # --- 4. NAVIGATION & EXAM LOGIC ---
 def start_exam(questions):
@@ -265,7 +289,7 @@ def render_dashboard():
             if not api_key: st.error("Please enter your API Key in the setup box above!")
             elif not topic: st.error("Please enter a topic!")
             else:
-                with st.spinner("AI is generating your exam. This may take a few moments..."):
+                with st.spinner("AI is testing models and generating your exam. This may take a moment..."):
                     qs = generate_questions_from_ai(api_key, topic, num_q=num_q)
                     if qs: 
                         st.session_state.qbank.extend(qs)
@@ -282,7 +306,7 @@ def render_dashboard():
             if not api_key: st.error("Please enter your API Key in the setup box above!")
             elif not uploaded_file: st.error("Please upload a PDF!")
             else:
-                with st.spinner("Reading PDF and generating exam..."):
+                with st.spinner("Reading PDF and testing AI models..."):
                     text = extract_text_from_pdf(uploaded_file)
                     topic_str = pdf_topic if pdf_topic else "the provided document"
                     qs = generate_questions_from_ai(api_key, topic_str, pdf_text=text, num_q=num_q_pdf)
