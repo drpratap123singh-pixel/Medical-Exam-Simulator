@@ -55,7 +55,8 @@ def extract_text_from_pdf(pdf_file):
 
 def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # Switched from gemini-1.5-flash to the universally available gemini-pro to prevent 404 errors
+    model = genai.GenerativeModel('gemini-pro')
     
     prompt = f"""
     You are an expert medical examiner for the INI SS (super-specialty) exam.
