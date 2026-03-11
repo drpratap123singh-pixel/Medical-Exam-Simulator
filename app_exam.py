@@ -2,8 +2,8 @@ import streamlit as st
 import json
 import os
 import requests
-import google.generativeai as genai
 import PyPDF2
+import re
 from datetime import datetime
 
 # --- PAGE CONFIG ---
@@ -45,7 +45,7 @@ if 'responses' not in st.session_state:
 if 'statuses' not in st.session_state:
     st.session_state.statuses = {} 
 
-# --- 3. AI GENERATION LOGIC ---
+# --- 3. AI GENERATION LOGIC (Direct API Call) ---
 def extract_text_from_pdf(pdf_file):
     reader = PyPDF2.PdfReader(pdf_file)
     text = ""
@@ -54,9 +54,8 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
-    genai.configure(api_key=api_key)
-    # Switched from gemini-1.5-flash to the universally available gemini-pro to prevent 404 errors
-    model = genai.GenerativeModel('gemini-pro')
+    # Connecting directly to the REST API to avoid SDK version 404 errors
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
     
     prompt = f"""
     You are an expert medical examiner for the INI SS (super-specialty) exam.
@@ -65,7 +64,7 @@ def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
     
     Context Text: {pdf_text[:15000]}
     
-    CRITICAL INSTRUCTION: Your response MUST be ONLY a valid JSON array. Do not include any markdown formatting like ```json.
+    CRITICAL INSTRUCTION: Your response MUST be ONLY a valid JSON array. Do not include any markdown formatting or extra text.
     Format exactly like this:
     [
       {{
@@ -76,18 +75,39 @@ def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
       }}
     ]
     """
+    
+    headers = {'Content-Type': 'application/json'}
+    payload = {
+        "contents": [{
+            "parts": [{"text": prompt}]
+        }],
+        "generationConfig": {
+            "temperature": 0.7
+        }
+    }
+    
     try:
-        response = model.generate_content(prompt)
-        raw_text = response.text.strip()
+        response = requests.post(url, headers=headers, json=payload)
+        response.raise_for_status() # Check for HTTP errors like 404 or 401
         
-        # Safe cleanup of markdown blocks to prevent syntax errors
-        raw_text = raw_text.replace('```json', '')
-        raw_text = raw_text.replace('```', '')
-        raw_text = raw_text.strip()
+        result = response.json()
+        raw_text = result['candidates'][0]['content']['parts'][0]['text'].strip()
+        
+        # Smart cleanup using regex to find the JSON array even if AI adds conversational text
+        match = re.search(r'\[.*\]', raw_text, re.DOTALL)
+        if match:
+            raw_text = match.group(0)
             
         return json.loads(raw_text)
+        
+    except requests.exceptions.HTTPError as err:
+        st.error(f"API Access Error: {err}. Please ensure your API key is correct and active.")
+        return None
+    except json.JSONDecodeError:
+        st.error("The AI returned improperly formatted data. Please try generating again.")
+        return None
     except Exception as e:
-        st.error(f"Failed to generate questions. Please try again. Error: {e}")
+        st.error(f"Failed to generate questions. Error: {e}")
         return None
 
 # --- 4. NAVIGATION & EXAM LOGIC ---
@@ -202,7 +222,6 @@ st.markdown("""
     /* Hide Streamlit components for app-like feel */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    /* Removed the hidden header to avoid breaking streamlit buttons */
     
     .top-bar-marrow {
         background-color: #212b36; color: white; padding: 10px 20px; font-size: 14px;
@@ -246,7 +265,7 @@ def render_dashboard():
             if not api_key: st.error("Please enter your API Key in the setup box above!")
             elif not topic: st.error("Please enter a topic!")
             else:
-                with st.spinner("AI is generating your exam..."):
+                with st.spinner("AI is generating your exam. This may take a few moments..."):
                     qs = generate_questions_from_ai(api_key, topic, num_q=num_q)
                     if qs: 
                         st.session_state.qbank.extend(qs)
