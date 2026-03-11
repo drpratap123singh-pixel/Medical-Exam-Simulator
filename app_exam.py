@@ -45,7 +45,7 @@ if 'responses' not in st.session_state:
 if 'statuses' not in st.session_state:
     st.session_state.statuses = {} 
 
-# --- 3. AI GENERATION LOGIC (Robust Fallback System) ---
+# --- 3. AI GENERATION LOGIC (Dynamic Model Fetching) ---
 def extract_text_from_pdf(pdf_file):
     reader = PyPDF2.PdfReader(pdf_file)
     text = ""
@@ -54,18 +54,50 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
-    # Clean the API key to prevent hidden space errors causing 404s
     clean_key = api_key.strip()
     
-    # A list of models to try in descending order of preference. 
-    models_to_try = [
-        "gemini-1.5-flash",
-        "gemini-1.5-flash-latest",
-        "gemini-1.5-pro",
-        "gemini-1.0-pro",
-        "gemini-pro"
-    ]
+    # STEP 1: Dynamically ask Google which models this specific API key has access to
+    list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={clean_key}"
     
+    try:
+        list_resp = requests.get(list_url)
+        if list_resp.status_code == 400:
+            st.error("Your API Key is invalid. Please check it and try again.")
+            return None
+            
+        list_resp.raise_for_status()
+        available_models = list_resp.json().get('models', [])
+        
+        # Filter for models that actually support text generation
+        valid_models = [
+            m['name'].replace('models/', '') 
+            for m in available_models 
+            if 'generateContent' in m.get('supportedGenerationMethods', [])
+        ]
+        
+        if not valid_models:
+            st.error("Your API key does not have access to any text generation models in your region.")
+            return None
+            
+        # Pick the best available model (prioritizing the newest flash/pro models)
+        chosen_model = valid_models[0] # Fallback to whatever is first
+        preferences = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
+        
+        for pref in preferences:
+            found = False
+            for vm in valid_models:
+                if pref in vm:
+                    chosen_model = vm
+                    found = True
+                    break
+            if found:
+                break
+                
+    except Exception as e:
+        st.error(f"Failed to authenticate or fetch allowed models. Error: {e}")
+        return None
+
+    # STEP 2: Use the exact model the API just told us is valid
     prompt = f"""
     You are an expert medical examiner for the INI SS (super-specialty) exam.
     Create {num_q} multiple-choice questions on the topic: "{topic}".
@@ -87,60 +119,41 @@ def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
     
     headers = {'Content-Type': 'application/json'}
     payload = {
-        "contents": [{
-            "parts": [{"text": prompt}]
-        }],
-        "generationConfig": {
-            "temperature": 0.7
-        }
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.7}
     }
     
-    last_error = ""
-    detailed_error = ""
+    generate_url = f"https://generativelanguage.googleapis.com/v1beta/models/{chosen_model}:generateContent?key={clean_key}"
     
-    for model_name in models_to_try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={clean_key}"
+    try:
+        response = requests.post(generate_url, headers=headers, json=payload)
+        response.raise_for_status()
         
-        try:
-            response = requests.post(url, headers=headers, json=payload)
+        result = response.json()
+        if 'candidates' not in result or not result['candidates']:
+            st.error("The AI returned an empty response. Please try again.")
+            return None
             
-            # Catch bad API keys immediately before looping
-            if response.status_code == 400 and "API key not valid" in response.text:
-                st.error("Your API Key is invalid. Please check it and try again.")
-                return None
-                
-            response.raise_for_status() 
+        raw_text = result['candidates'][0]['content']['parts'][0]['text'].strip()
+        
+        # Smart cleanup using regex to find the JSON array
+        match = re.search(r'\[.*\]', raw_text, re.DOTALL)
+        if match:
+            raw_text = match.group(0)
             
-            result = response.json()
-            if 'candidates' not in result or not result['candidates']:
-                continue
-                
-            raw_text = result['candidates'][0]['content']['parts'][0]['text'].strip()
-            
-            # Smart cleanup using regex to find the JSON array even if AI adds conversational text
-            match = re.search(r'\[.*\]', raw_text, re.DOTALL)
-            if match:
-                raw_text = match.group(0)
-                
-            return json.loads(raw_text)
-            
-        except requests.exceptions.HTTPError as err:
-            last_error = f"{model_name} failed ({response.status_code})"
-            detailed_error = response.text # Capture exact Google error
-            continue 
-        except json.JSONDecodeError:
-            last_error = f"{model_name} returned malformed JSON"
-            continue
-        except Exception as e:
-            last_error = str(e)
-            continue
-            
-    # If the loop finishes and nothing worked, display the detailed error
-    st.error(f"Failed to connect to Google AI. Last Error: {last_error}")
-    with st.expander("Click to view detailed API error from Google"):
-        st.code(detailed_error)
-        st.markdown("If you see 'Not Found' here, please generate a brand new API key using the link above.")
-    return None
+        return json.loads(raw_text)
+        
+    except requests.exceptions.HTTPError as err:
+        st.error(f"Failed to generate questions. The model '{chosen_model}' rejected the request.")
+        with st.expander("Click to view detailed API error"):
+            st.code(response.text)
+        return None
+    except json.JSONDecodeError:
+        st.error("The AI returned improperly formatted data. Please try generating again.")
+        return None
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
+        return None
 
 # --- 4. NAVIGATION & EXAM LOGIC ---
 def start_exam(questions):
@@ -282,7 +295,6 @@ st.markdown("""
 def render_dashboard():
     st.title("🩺 INI SS Generator & Grand Test Simulator")
     
-    # API KEY INPUT MOVED TO MAIN SCREEN
     with st.expander("🔑 Setup: Enter your Google Gemini API Key here first!", expanded=True):
         api_key = st.text_input("API Key", type="password", placeholder="Paste your API key here...", label_visibility="collapsed")
         st.markdown("Don't have one? [Get your free API Key here](https://aistudio.google.com/app/apikey)")
@@ -297,7 +309,7 @@ def render_dashboard():
             if not api_key: st.error("Please enter your API Key in the setup box above!")
             elif not topic: st.error("Please enter a topic!")
             else:
-                with st.spinner("AI is testing models and generating your exam. This may take a moment..."):
+                with st.spinner("AI is dynamically finding approved models and generating your exam. Please wait..."):
                     qs = generate_questions_from_ai(api_key, topic, num_q=num_q)
                     if qs: 
                         st.session_state.qbank.extend(qs)
@@ -314,7 +326,7 @@ def render_dashboard():
             if not api_key: st.error("Please enter your API Key in the setup box above!")
             elif not uploaded_file: st.error("Please upload a PDF!")
             else:
-                with st.spinner("Reading PDF and testing AI models..."):
+                with st.spinner("Reading PDF and dynamically selecting AI model..."):
                     text = extract_text_from_pdf(uploaded_file)
                     topic_str = pdf_topic if pdf_topic else "the provided document"
                     qs = generate_questions_from_ai(api_key, topic_str, pdf_text=text, num_q=num_q_pdf)
@@ -375,7 +387,6 @@ def render_exam_ui():
     col_main, col_side = st.columns([3.5, 1.5], gap="medium")
     
     with col_main:
-        # Scrollable Question Container
         with st.container(height=650, border=True):
             st.markdown(f"<div style='text-align:right; color:#d32f2f; font-weight:bold;'>Time Left: 00:32:04</div>", unsafe_allow_html=True)
             st.markdown("<div class='q-type-bar'>Question type : MCQ</div>", unsafe_allow_html=True)
@@ -393,7 +404,6 @@ def render_exam_ui():
             st.radio("Options", options, index=default_idx, key=f"radio_{idx}", label_visibility="collapsed")
             st.markdown("<br><label style='color:#555; font-size:14px;'><input type='checkbox'> I am guessing this ℹ️</label>", unsafe_allow_html=True)
             
-        # Action Buttons Fixed Below Container
         btn_c1, btn_c2, btn_spacer, btn_c3, btn_c4 = st.columns([2.5, 2, 2.5, 2.5, 2])
         with btn_c1: st.button("Mark for Review & Next", on_click=mark_and_next, use_container_width=True)
         with btn_c2: st.button("Clear Response", on_click=clear_response, use_container_width=True)
@@ -401,7 +411,6 @@ def render_exam_ui():
         with btn_c4: st.button("Submit", on_click=submit_exam, type="primary", use_container_width=True)
 
     with col_side:
-        # Scrollable Palette Container
         with st.container(height=720, border=True):
             st.markdown("""
             <div class='profile-box'>
