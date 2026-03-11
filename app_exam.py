@@ -4,16 +4,11 @@ import os
 import requests
 import google.generativeai as genai
 import PyPDF2
-def fetch_data(url):
-    try:
-        response = requests.get(url)
-        return response.json()
-    except Exception as e:
-        return None
 from datetime import datetime
 
 # --- PAGE CONFIG ---
-st.set_page_config(layout="wide", page_title="INI SS CBT Simulator", initial_sidebar_state="expanded")
+st.set_page_config(layout="wide", page_title="INI SS CBT Simulator", initial_sidebar_state="collapsed")
+
 QBANK_FILE = "local_qbank.json"
 HISTORY_FILE = "local_history.json"
 
@@ -203,13 +198,14 @@ def load_past_exam(record, is_retake=False):
 # --- 5. CSS STYLING ---
 st.markdown("""
 <style>
+    /* Hide Streamlit components for app-like feel */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Removed the hidden header to avoid breaking streamlit buttons */
     
     .top-bar-marrow {
         background-color: #212b36; color: white; padding: 10px 20px; font-size: 14px;
-        display: flex; justify-content: flex-end; border-radius: 4px; margin-top: -40px; margin-bottom: 10px;
+        display: flex; justify-content: flex-end; border-radius: 4px; margin-top: -20px; margin-bottom: 10px;
     }
     
     .q-type-bar { color: #d32f2f; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;}
@@ -234,16 +230,19 @@ st.markdown("""
 def render_dashboard():
     st.title("🩺 INI SS Generator & Grand Test Simulator")
     
-    api_key = st.sidebar.text_input("Enter Google Gemini API Key", type="password")
+    # API KEY INPUT MOVED TO MAIN SCREEN
+    with st.expander("🔑 Setup: Enter your Google Gemini API Key here first!", expanded=True):
+        api_key = st.text_input("API Key", type="password", placeholder="Paste your API key here...", label_visibility="collapsed")
+        st.markdown("Don't have one? [Get your free API Key here](https://aistudio.google.com/app/apikey)")
     
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["🧠 Generate New Exam", "📄 From PDF", "📥 Import JSON", "📊 Past Exams & Grand Tests", "📚 Question Bank"])
+    tab1, tab2, tab3, tab4 = st.tabs(["🧠 Generate New Exam", "📄 From PDF", "📥 Import JSON", "📊 Past Exams & Grand Tests"])
     
     with tab1:
         st.subheader("Generate Exam by Topic")
         topic = st.text_input("Enter Topic (e.g., Rheumatoid Arthritis, Vasculitis)")
         num_q = st.slider("Number of Questions", 5, 50, 10)
         if st.button("Generate & Start Exam", key="btn_gen_topic"):
-            if not api_key: st.error("Please enter API Key in sidebar!")
+            if not api_key: st.error("Please enter your API Key in the setup box above!")
             elif not topic: st.error("Please enter a topic!")
             else:
                 with st.spinner("AI is generating your exam..."):
@@ -260,7 +259,7 @@ def render_dashboard():
         pdf_topic = st.text_input("Specific focus for these PDF questions (Optional)")
         num_q_pdf = st.slider("Number of Questions (PDF)", 5, 50, 10)
         if st.button("Generate & Start Exam", key="btn_gen_pdf"):
-            if not api_key: st.error("Please enter API Key in sidebar!")
+            if not api_key: st.error("Please enter your API Key in the setup box above!")
             elif not uploaded_file: st.error("Please upload a PDF!")
             else:
                 with st.spinner("Reading PDF and generating exam..."):
@@ -312,34 +311,7 @@ def render_dashboard():
                     if cols[2].button("🔄 Retake Exam", key=f"ret_{rec['id']}", use_container_width=True):
                         load_past_exam(rec, is_retake=True)
                         st.rerun()
-    with tab5:
-        st.header("Medical Super-Specialty Question Bank")
-    
-        # Selection Menu
-        quiz_choice = st.selectbox(
-        "Select a Topic to Start Test:",
-        ["Select Topic", "Systemic Sclerosis", "Immunology (SAD)", "General Medicine"]
-        )
 
-    # Use your actual Gist RAW URLs here
-    URL_MAP = {
-        "Systemic Sclerosis": "https://gist.githubusercontent.com/drpratap123singh-pixel/0c89646350ae70ae3dc4353fe9d38f15/raw/ssc_quiz.json",
-        "Immunology (SAD)": "PASTE_YOUR_IMMUNOLOGY_GIST_RAW_URL_HERE"
-    }
-
-    if quiz_choice != "Select Topic":
-        # Fetch data from the URL
-        url = URL_MAP.get(quiz_choice)
-        questions = fetch_data(url) # Ensure your fetch_data function is defined at the top of app_exam.py
-        
-        if questions:
-            # Start the Exam using your app's existing start_exam function
-            if st.button(f"Begin {quiz_choice} CBT"):
-                start_exam(questions)
-                st.rerun()
-        else:
-            st.error("Could not load the quiz. Please check the URL in the code.")
-            
 # --- 7. EXAM UI ---
 def render_exam_ui():
     idx = st.session_state.current_q_idx
@@ -351,7 +323,7 @@ def render_exam_ui():
     col_main, col_side = st.columns([3.5, 1.5], gap="medium")
     
     with col_main:
-        # 1. Independent Scrollable Container for Questions
+        # Scrollable Question Container
         with st.container(height=650, border=True):
             st.markdown(f"<div style='text-align:right; color:#d32f2f; font-weight:bold;'>Time Left: 00:32:04</div>", unsafe_allow_html=True)
             st.markdown("<div class='q-type-bar'>Question type : MCQ</div>", unsafe_allow_html=True)
@@ -377,7 +349,7 @@ def render_exam_ui():
         with btn_c4: st.button("Submit", on_click=submit_exam, type="primary", use_container_width=True)
 
     with col_side:
-        # 2. Independent Scrollable Container for Palette
+        # Scrollable Palette Container
         with st.container(height=720, border=True):
             st.markdown("""
             <div class='profile-box'>
@@ -516,6 +488,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
