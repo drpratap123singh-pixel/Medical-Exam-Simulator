@@ -54,10 +54,13 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
+    # Clean the API key to prevent hidden space errors causing 404s
+    clean_key = api_key.strip()
+    
     # A list of models to try in descending order of preference. 
-    # If one returns a 404, it automatically tries the next one.
     models_to_try = [
         "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
         "gemini-1.5-pro",
         "gemini-1.0-pro",
         "gemini-pro"
@@ -93,9 +96,10 @@ def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
     }
     
     last_error = ""
+    detailed_error = ""
     
     for model_name in models_to_try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={clean_key}"
         
         try:
             response = requests.post(url, headers=headers, json=payload)
@@ -122,7 +126,8 @@ def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
             
         except requests.exceptions.HTTPError as err:
             last_error = f"{model_name} failed ({response.status_code})"
-            continue # Move to the next model in the list
+            detailed_error = response.text # Capture exact Google error
+            continue 
         except json.JSONDecodeError:
             last_error = f"{model_name} returned malformed JSON"
             continue
@@ -130,8 +135,11 @@ def generate_questions_from_ai(api_key, topic, pdf_text="", num_q=10):
             last_error = str(e)
             continue
             
-    # If the loop finishes and nothing worked, display the error
-    st.error(f"Failed to connect to Google AI. Please ensure your API key has correct permissions. Last Error: {last_error}")
+    # If the loop finishes and nothing worked, display the detailed error
+    st.error(f"Failed to connect to Google AI. Last Error: {last_error}")
+    with st.expander("Click to view detailed API error from Google"):
+        st.code(detailed_error)
+        st.markdown("If you see 'Not Found' here, please generate a brand new API key using the link above.")
     return None
 
 # --- 4. NAVIGATION & EXAM LOGIC ---
