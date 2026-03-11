@@ -13,7 +13,7 @@ def fetch_data(url):
 from datetime import datetime
 
 # --- PAGE CONFIG ---
-st.set_page_config(layout="wide", page_title="INI SS CBT Simulator")
+st.set_page_config(layout="wide", page_title="INI SS CBT Simulator", initial_sidebar_state="expanded")
 
 QBANK_FILE = "local_qbank.json"
 HISTORY_FILE = "local_history.json"
